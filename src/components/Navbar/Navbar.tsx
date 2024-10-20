@@ -11,9 +11,10 @@ import Menu from '@mui/material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import { Button } from '@mui/material';
+import { Button, Divider } from '@mui/material';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../utils';
+import Typography from '@mui/material/Typography';
 
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -59,7 +60,7 @@ export const Navbar = () => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
-	const { currentUser } = useAuth();
+	const { currentUser, logout } = useAuth();
 
 	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -99,7 +100,15 @@ export const Navbar = () => {
 			onClose={handleMenuClose}
 		>
 			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-			<MenuItem onClick={handleMenuClose}>My account</MenuItem>
+			<Divider />
+			<MenuItem
+				onClick={async () => {
+					await logout();
+					handleMenuClose();
+				}}
+			>
+				<Typography color='error'>Log out</Typography>
+			</MenuItem>
 		</Menu>
 	);
 

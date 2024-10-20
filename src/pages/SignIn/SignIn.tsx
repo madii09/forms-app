@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils';
 import { useLogin } from '../../hooks';
 import { useEffect } from 'react';
@@ -56,6 +56,8 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export const SignIn = () => {
+	const navigate = useNavigate();
+
 	const [email, setEmail] = React.useState<string>('');
 	const [emailError, setEmailError] = React.useState(false);
 	const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
@@ -64,7 +66,7 @@ export const SignIn = () => {
 	const [passwordError, setPasswordError] = React.useState(false);
 	const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
-	const { login, loading, error } = useLogin({ email, password, isRegister: false });
+	const { login, loading, error, currentUser } = useLogin({ email, password, isRegister: false });
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -111,6 +113,12 @@ export const SignIn = () => {
 			setPasswordError(true);
 		}
 	}, [error]);
+
+	useEffect(() => {
+		if (currentUser) {
+			navigate(ROUTES.home);
+		}
+	}, [currentUser, navigate]);
 
 	return (
 		<Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column' }}>

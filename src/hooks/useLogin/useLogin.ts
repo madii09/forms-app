@@ -6,8 +6,9 @@ import {
 	updateProfile,
 } from 'firebase/auth';
 import { useAuth } from '../useAuth/useAuth';
-import { auth } from '../../services/firebase';
-import { UseLoginProps, UseLoginResult } from './types';
+import { auth, db } from '../../services/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { UseLoginProps, UseLoginResult, UserDataProps } from './types';
 
 export const useLogin = ({
 	email,
@@ -15,7 +16,7 @@ export const useLogin = ({
 	username,
 	isRegister,
 }: UseLoginProps): UseLoginResult => {
-	const { currentUser } = useAuth(); // Access global user state
+	const { currentUser, logout } = useAuth(); // Access global user state
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -24,15 +25,39 @@ export const useLogin = ({
 		setError(null);
 
 		try {
+			let userCredential;
 			if (isRegister && username) {
-				const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+				// Register the user
+				userCredential = await createUserWithEmailAndPassword(auth, email, password);
 				const user = userCredential.user;
 
 				// Update Firebase profile with the username
 				await updateProfile(user, { displayName: username });
+
+				// Set initial role and status in Firestore
+				const userDocRef = doc(db, 'users', user.uid);
+				await setDoc(userDocRef, { email, role: 'user', blocked: false });
 			} else {
-				await signInWithEmailAndPassword(auth, email, password);
+				// Log the user in
+				userCredential = await signInWithEmailAndPassword(auth, email, password);
 			}
+
+			const user = userCredential.user;
+			const userDocRef = doc(db, 'users', user.uid);
+			const userDoc = await getDoc(userDocRef);
+
+			if (!userDoc.exists()) {
+				throw new Error('User not found in Firestore.');
+			}
+
+			const userData = userDoc.data() as UserDataProps;
+
+			// Check if the user is blocked
+			if (userData.blocked) {
+				throw new Error('This account is blocked.');
+			}
+
+			console.log('User data:', userData);
 		} catch (err) {
 			const firebaseError = err as AuthError;
 			setError(firebaseError.message);
@@ -41,5 +66,5 @@ export const useLogin = ({
 		}
 	};
 
-	return { login, loading, error, currentUser };
+	return { login, logout, loading, error, currentUser };
 };

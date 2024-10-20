@@ -6,7 +6,7 @@ import { USER_ROLE } from '../../utils';
 import { UseAdminResult } from './types';
 
 export const useAdmin = (): UseAdminResult => {
-	const { currentUser, isUserAdmin } = useAuth();
+	const { currentUser, isUserAdmin, logout } = useAuth();
 
 	if (currentUser && !isUserAdmin) {
 		throw new Error('Access denied: Only admins can manage users.');
@@ -26,13 +26,23 @@ export const useAdmin = (): UseAdminResult => {
 			batch.update(doc(db, 'users', uid), { role: USER_ROLE.admin }),
 		);
 
-	const demoteFromAdmin = (uids: string[]) =>
-		batchOperation(uids, (batch, uid) =>
+	const demoteFromAdmin = async (uids: string[]) => {
+		const demoteCurrentUser = uids.includes(currentUser?.uid || '');
+		await batchOperation(uids, (batch, uid) =>
 			batch.update(doc(db, 'users', uid), { role: USER_ROLE.user }),
 		);
+		if (demoteCurrentUser) window.location.reload();
+	};
 
-	const blockUser = (uids: string[]) =>
-		batchOperation(uids, (batch, uid) => batch.update(doc(db, 'users', uid), { blocked: true }));
+	const blockUser = async (uids: string[]) => {
+		const blockCurrentUser = uids.includes(currentUser?.uid || '');
+		await batchOperation(uids, (batch, uid) =>
+			batch.update(doc(db, 'users', uid), { blocked: true }),
+		);
+		if (blockCurrentUser) {
+			await logout();
+		}
+	};
 
 	const unblockUser = (uids: string[]) =>
 		batchOperation(uids, (batch, uid) => batch.update(doc(db, 'users', uid), { blocked: false }));

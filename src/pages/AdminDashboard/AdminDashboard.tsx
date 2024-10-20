@@ -14,7 +14,7 @@ export const AdminDashboard: React.FC = () => {
 	const [selectedUsersIds, setSelectedUsersIds] = useState<GridRowId[]>([]);
 
 	const navigate = useNavigate();
-	const { currentUser, userStore, isUserAdmin } = useAuth();
+	const { currentUser, isUserAdmin } = useAuth();
 	const userControls = useAdmin();
 
 	const fetchUsers = async () => {
@@ -41,8 +41,6 @@ export const AdminDashboard: React.FC = () => {
 			navigate(ROUTES.home);
 		}
 	}, [currentUser, isUserAdmin, navigate]);
-
-	console.log(currentUser, userStore, isUserAdmin);
 
 	return (
 		<Box sx={{ padding: '1.5rem' }}>

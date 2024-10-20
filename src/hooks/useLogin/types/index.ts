@@ -1,4 +1,3 @@
-import { User } from 'firebase/auth';
 import { UserRole } from '../../../Providers/AuthProvider';
 
 export interface UserDataProps {
@@ -20,8 +19,6 @@ export interface UseLoginProps {
 
 export interface UseLoginResult {
 	login: (props: LoginProps) => Promise<void>;
-	logout: () => Promise<void>;
 	loading: boolean;
 	error: string | null;
-	currentUser: User | null;
 }

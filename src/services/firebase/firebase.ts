@@ -20,7 +20,7 @@ export const db = getFirestore(app);
 // Initialize Cloud Functions
 export const functions = getFunctions(app);
 
-// Optional: Connect to emulator in development
+// Connect to emulator in development
 if (import.meta.env.MODE === 'development') {
 	connectFunctionsEmulator(functions, 'localhost', 5001);
 }

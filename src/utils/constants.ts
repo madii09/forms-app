@@ -4,3 +4,5 @@ export const USER_ROLE: Record<UserRole, UserRole> = {
 	admin: 'admin',
 	user: 'user',
 };
+
+export const ADMIN_PREFIX = '@admin:';

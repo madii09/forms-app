@@ -11,6 +11,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [userStore, setUserStore] = useState<UserStoreProps | null>(null);
 	const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isUserBlocked, setIsUserBlocked] = useState<boolean>(false);
 
 	const logout = async (): Promise<void> => {
 		await signOut(auth);
@@ -20,20 +22,30 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
 	useEffect(() => {
 		return onAuthStateChanged(auth, async user => {
+			setIsLoading(true);
 			if (user) {
 				const userDoc = await getDoc(doc(db, 'users', user.uid));
 				if (userDoc.exists()) {
 					const data = userDoc.data();
-					setUserStore(data as UserStoreProps);
-					setIsUserAdmin(data.role === USER_ROLE.admin);
+					if (!data.blocked) {
+						setIsUserBlocked(false);
+						setUserStore(data as UserStoreProps);
+						setIsUserAdmin(data.role === USER_ROLE.admin);
+					} else {
+						await logout();
+						setIsUserBlocked(true);
+					}
 				}
 			}
 			setCurrentUser(user);
+			setIsLoading(false);
 		});
-	}, []);
+	}, [isUserBlocked]);
 
 	return (
-		<AuthContext.Provider value={{ currentUser, userStore, isUserAdmin, logout }}>
+		<AuthContext.Provider
+			value={{ currentUser, userStore, isUserAdmin, isLoading, isUserBlocked, logout }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

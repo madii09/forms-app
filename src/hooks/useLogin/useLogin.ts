@@ -5,17 +5,14 @@ import {
 	signInWithEmailAndPassword,
 	updateProfile,
 } from 'firebase/auth';
-import { useAuth } from '../useAuth/useAuth';
 import { auth, db } from '../../services/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { LoginProps, UseLoginProps, UseLoginResult, UserDataProps } from './types';
-import { USER_ROLE } from '../../utils';
+import { LoginProps, UseLoginProps, UseLoginResult } from './types';
+import { getUserType, normalizeUsername } from '../../utils';
 
 export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
-
-	const { currentUser, logout } = useAuth(); // Access global user state
 
 	const login = async ({ email, password, username }: LoginProps): Promise<void> => {
 		setLoading(true);
@@ -33,7 +30,12 @@ export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 
 				// Set initial role and status in Firestore
 				const userDocRef = doc(db, 'users', user.uid);
-				await setDoc(userDocRef, { email, role: USER_ROLE.user, blocked: false });
+				await setDoc(userDocRef, {
+					email,
+					role: getUserType(username),
+					blocked: false,
+					username: normalizeUsername(username),
+				});
 			} else {
 				// Log the user in
 				userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -42,16 +44,8 @@ export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 			const user = userCredential.user;
 			const userDocRef = doc(db, 'users', user.uid);
 			const userDoc = await getDoc(userDocRef);
-
 			if (!userDoc.exists()) {
 				throw new Error('User not found in Firestore.');
-			}
-
-			const userData = userDoc.data() as UserDataProps;
-
-			// Check if the user is blocked
-			if (userData.blocked) {
-				throw new Error('This account is blocked.');
 			}
 		} catch (err) {
 			const firebaseError = err as AuthError;
@@ -61,5 +55,5 @@ export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 		}
 	};
 
-	return { login, logout, loading, error, currentUser };
+	return { login, loading, error };
 };

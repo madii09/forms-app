@@ -12,9 +12,9 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils';
-import { useLogin } from '../../hooks';
+import { useAuth, useLogin } from '../../hooks';
 import { useEffect, useState } from 'react';
-import { Snackbar } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
 	display: 'flex',
@@ -62,7 +62,8 @@ export const SignIn = () => {
 	const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
 
 	const navigate = useNavigate();
-	const { login, loading, error, currentUser } = useLogin({ isRegister: false });
+	const { currentUser, isUserBlocked } = useAuth();
+	const { login, loading, error } = useLogin({ isRegister: false });
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -110,19 +111,29 @@ export const SignIn = () => {
 	}, [error]);
 
 	useEffect(() => {
-		if (currentUser) {
+		if (!isUserBlocked && currentUser) {
 			navigate(ROUTES.home);
 		}
-	}, [currentUser, navigate]);
+	}, [currentUser, isUserBlocked, navigate]);
 
 	return (
 		<Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column' }}>
 			{error && (
+				<Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={Boolean(error)}>
+					<Alert severity='error' variant='filled' sx={{ width: '100%' }}>
+						{error}
+					</Alert>
+				</Snackbar>
+			)}
+			{isUserBlocked && (
 				<Snackbar
-					anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-					open={Boolean(error)}
-					message={error}
-				/>
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+					open={Boolean(isUserBlocked)}
+				>
+					<Alert severity='error' variant='filled' sx={{ width: '100%' }}>
+						User is Blocked
+					</Alert>
+				</Snackbar>
 			)}
 			<CssBaseline enableColorScheme />
 			<SignInContainer direction='column' justifyContent='space-between'>

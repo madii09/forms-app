@@ -13,7 +13,7 @@ import { styled } from '@mui/material/styles';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils';
 import { useLogin } from '../../hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Snackbar } from '@mui/material';
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -56,28 +56,23 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export const SignIn = () => {
+	const [emailError, setEmailError] = useState(false);
+	const [emailErrorMessage, setEmailErrorMessage] = useState('');
+	const [passwordError, setPasswordError] = useState(false);
+	const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+
 	const navigate = useNavigate();
-
-	const [email, setEmail] = React.useState<string>('');
-	const [emailError, setEmailError] = React.useState(false);
-	const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-
-	const [password, setPassword] = React.useState<string>('');
-	const [passwordError, setPasswordError] = React.useState(false);
-	const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-
-	const { login, loading, error, currentUser } = useLogin({ email, password, isRegister: false });
+	const { login, loading, error, currentUser } = useLogin({ isRegister: false });
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		if (emailError || passwordError) {
-			return;
-		}
+		if (emailError || passwordError) return;
 		const data = new FormData(event.currentTarget);
-		setEmail(data.get('email') as string);
-		setPassword(data.get('password') as string);
 
-		await login();
+		await login({
+			email: data.get('email') as string,
+			password: data.get('password') as string,
+		});
 	};
 
 	const validateInputs = () => {

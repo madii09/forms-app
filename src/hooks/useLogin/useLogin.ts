@@ -8,19 +8,16 @@ import {
 import { useAuth } from '../useAuth/useAuth';
 import { auth, db } from '../../services/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { UseLoginProps, UseLoginResult, UserDataProps } from './types';
+import { LoginProps, UseLoginProps, UseLoginResult, UserDataProps } from './types';
+import { USER_ROLE } from '../../utils';
 
-export const useLogin = ({
-	email,
-	password,
-	username,
-	isRegister,
-}: UseLoginProps): UseLoginResult => {
-	const { currentUser, logout } = useAuth(); // Access global user state
+export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 	const [loading, setLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const login = async (): Promise<void> => {
+	const { currentUser, logout } = useAuth(); // Access global user state
+
+	const login = async ({ email, password, username }: LoginProps): Promise<void> => {
 		setLoading(true);
 		setError(null);
 
@@ -36,7 +33,7 @@ export const useLogin = ({
 
 				// Set initial role and status in Firestore
 				const userDocRef = doc(db, 'users', user.uid);
-				await setDoc(userDocRef, { email, role: 'user', blocked: false });
+				await setDoc(userDocRef, { email, role: USER_ROLE.user, blocked: false });
 			} else {
 				// Log the user in
 				userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -56,8 +53,6 @@ export const useLogin = ({
 			if (userData.blocked) {
 				throw new Error('This account is blocked.');
 			}
-
-			console.log('User data:', userData);
 		} catch (err) {
 			const firebaseError = err as AuthError;
 			setError(firebaseError.message);

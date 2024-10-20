@@ -12,6 +12,7 @@ export interface UserStoreProps {
 export interface AuthContextProps {
 	currentUser: User | null;
 	userStore: UserStoreProps | null;
+	isUserAdmin: boolean;
 	logout: () => Promise<void>;
 }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -60,7 +60,9 @@ export const Navbar = () => {
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState<null | HTMLElement>(null);
 
-	const { currentUser, logout } = useAuth();
+	const { currentUser, isUserAdmin, logout } = useAuth();
+	const { pathname } = useLocation();
+	const isHomePage = pathname === ROUTES.home;
 
 	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -148,39 +150,71 @@ export const Navbar = () => {
 		<Box sx={{ flexGrow: 1 }}>
 			<AppBar position='static'>
 				<Toolbar>
-					<Search>
-						<SearchIconWrapper>
-							<SearchIcon />
-						</SearchIconWrapper>
-						<StyledInputBase
-							placeholder='Search for templates…'
-							inputProps={{ 'aria-label': 'search for templates' }}
-						/>
-					</Search>
+					<RouterLink to={ROUTES.home}>
+						<Button
+							component='span'
+							variant='outlined'
+							sx={{ alignSelf: 'center', color: 'white' }}
+						>
+							Forms App
+						</Button>
+					</RouterLink>
+
+					{isHomePage && (
+						<Search>
+							<SearchIconWrapper>
+								<SearchIcon />
+							</SearchIconWrapper>
+							<StyledInputBase
+								placeholder='Search for templates…'
+								inputProps={{ 'aria-label': 'search for templates' }}
+							/>
+						</Search>
+					)}
 					<Box sx={{ flexGrow: 1 }} />
 					<Box sx={{ display: { xs: 'none', md: 'flex' } }}>
 						{currentUser ? (
-							<IconButton
-								size='large'
-								edge='end'
-								aria-label='account of current user'
-								aria-controls={menuId}
-								aria-haspopup='true'
-								onClick={handleProfileMenuOpen}
-								color='inherit'
-							>
-								<AccountCircle />
-							</IconButton>
-						) : (
-							<RouterLink to={ROUTES.signIn}>
-								<Button
-									component='span'
-									variant='outlined'
-									sx={{ alignSelf: 'center', color: 'white' }}
+							<>
+								{isUserAdmin && (
+									<RouterLink to={ROUTES.adminDashboard}>
+										<Button
+											component='span'
+											variant='outlined'
+											sx={{ color: 'white', height: '48px' }}
+										>
+											Admin Dashboard
+										</Button>
+									</RouterLink>
+								)}
+								<IconButton
+									size='large'
+									edge='end'
+									aria-label='account of current user'
+									aria-controls={menuId}
+									aria-haspopup='true'
+									onClick={handleProfileMenuOpen}
+									color='inherit'
 								>
-									Login
-								</Button>
-							</RouterLink>
+									<AccountCircle />
+								</IconButton>
+							</>
+						) : (
+							<>
+								<RouterLink to={ROUTES.signIn}>
+									<Button
+										component='span'
+										variant='contained'
+										sx={{ color: 'white', marginRight: '1rem' }}
+									>
+										Sign In
+									</Button>
+								</RouterLink>
+								<RouterLink to={ROUTES.signUp}>
+									<Button component='span' variant='contained' sx={{ color: 'white' }}>
+										Register
+									</Button>
+								</RouterLink>
+							</>
 						)}
 					</Box>
 					<Box sx={{ display: { xs: 'flex', md: 'none' } }}>

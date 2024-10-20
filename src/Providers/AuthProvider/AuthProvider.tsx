@@ -3,12 +3,14 @@ import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../../services/firebase';
 import { AuthContextProps, AuthProviderProps, UserStoreProps } from './types';
+import { USER_ROLE } from '../../utils';
 
 export const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [userStore, setUserStore] = useState<UserStoreProps | null>(null);
+	const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
 
 	const logout = async (): Promise<void> => {
 		await signOut(auth);
@@ -23,6 +25,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 				if (userDoc.exists()) {
 					const data = userDoc.data();
 					setUserStore(data as UserStoreProps);
+					setIsUserAdmin(data.role === USER_ROLE.admin);
 				}
 			}
 			setCurrentUser(user);
@@ -30,7 +33,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 	}, []);
 
 	return (
-		<AuthContext.Provider value={{ currentUser, userStore, logout }}>
+		<AuthContext.Provider value={{ currentUser, userStore, isUserAdmin, logout }}>
 			{children}
 		</AuthContext.Provider>
 	);

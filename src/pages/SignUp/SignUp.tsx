@@ -51,26 +51,15 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export const SignUp = () => {
-	const navigate = useNavigate();
-
-	const [name, setName] = React.useState('');
 	const [nameError, setNameError] = React.useState(false);
 	const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-
-	const [email, setEmail] = React.useState<string>('');
 	const [emailError, setEmailError] = React.useState(false);
 	const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-
-	const [password, setPassword] = React.useState<string>('');
 	const [passwordError, setPasswordError] = React.useState(false);
 	const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
-	const { login, loading, error, currentUser } = useLogin({
-		email,
-		password,
-		username: name,
-		isRegister: true,
-	});
+	const navigate = useNavigate();
+	const { login, loading, error, currentUser } = useLogin({ isRegister: true });
 
 	const validateInputs = () => {
 		const email = document.getElementById('email') as HTMLInputElement;
@@ -111,17 +100,14 @@ export const SignUp = () => {
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-
-		if (nameError || emailError || passwordError) {
-			return;
-		}
-
+		if (nameError || emailError || passwordError) return;
 		const data = new FormData(event.currentTarget);
-		setName(data.get('name') as string);
-		setEmail(data.get('email') as string);
-		setPassword(data.get('password') as string);
 
-		await login();
+		await login({
+			username: data.get('name') as string,
+			email: data.get('email') as string,
+			password: data.get('password') as string,
+		});
 	};
 
 	useEffect(() => {

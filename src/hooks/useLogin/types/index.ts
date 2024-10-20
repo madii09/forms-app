@@ -8,15 +8,18 @@ export interface UserDataProps {
 	uid: string;
 }
 
-export interface UseLoginProps {
+export interface LoginProps {
 	email: string;
 	password: string;
 	username?: string;
+}
+
+export interface UseLoginProps {
 	isRegister: boolean;
 }
 
 export interface UseLoginResult {
-	login: () => Promise<void>;
+	login: (props: LoginProps) => Promise<void>;
 	logout: () => Promise<void>;
 	loading: boolean;
 	error: string | null;

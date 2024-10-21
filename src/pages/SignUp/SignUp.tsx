@@ -14,7 +14,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils';
-import { useLogin } from '../../hooks';
+import { useAuth, useLogin } from '../../hooks';
 import { useEffect } from 'react';
 import { Snackbar } from '@mui/material';
 
@@ -59,7 +59,8 @@ export const SignUp = () => {
 	const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
 	const navigate = useNavigate();
-	const { login, loading, error, currentUser } = useLogin({ isRegister: true });
+	const { login, loading, error } = useLogin({ isRegister: true });
+	const { currentUser } = useAuth();
 
 	const validateInputs = () => {
 		const email = document.getElementById('email') as HTMLInputElement;

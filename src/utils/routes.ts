@@ -3,4 +3,5 @@ export const ROUTES = {
 	signIn: '/sign-in',
 	signUp: '/sign-up',
 	adminDashboard: '/admin-dashboard',
+	createTemplate: '/create-template',
 } as const;

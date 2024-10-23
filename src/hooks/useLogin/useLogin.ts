@@ -36,6 +36,7 @@ export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 					blocked: false,
 					username: normalizeUsername(username),
 				});
+				return;
 			} else {
 				// Log the user in
 				userCredential = await signInWithEmailAndPassword(auth, email, password);

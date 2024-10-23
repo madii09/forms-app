@@ -8,7 +8,7 @@ import { TemplateList } from '../../components';
 import { ROUTES } from '../../utils';
 
 export const Home = () => {
-	const { isUserAdmin } = useAuth();
+	const { currentUser, userStore } = useAuth();
 	const { countPendingRequests } = useRequests();
 	const [requestCount, setRequestCount] = useState<number>(0);
 
@@ -23,21 +23,8 @@ export const Home = () => {
 
 	return (
 		<Box sx={{ padding: '0 1rem' }}>
-			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<Typography component='h1' variant='h4' color='primary' sx={{ textAlign: 'center' }}>
-					Templates
-				</Typography>
-				{isUserAdmin && (
-					<RouterLink to={ROUTES.createTemplate}>
-						<Button component='span' variant='contained' color='primary'>
-							Create template
-						</Button>
-					</RouterLink>
-				)}
-			</Box>
-
 			{requestCount > 0 && (
-				<Box sx={{ marginTop: '1.5rem' }}>
+				<Box sx={{ display: 'flex', justifyContent: 'flex-end', margin: '1.5rem 0' }}>
 					<RouterLink to={ROUTES.requests.route} style={{ textDecoration: 'none' }}>
 						<Button variant='contained' color='secondary' sx={{ position: 'relative' }}>
 							Requests ({requestCount})
@@ -66,6 +53,19 @@ export const Home = () => {
 					</RouterLink>
 				</Box>
 			)}
+
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+				<Typography component='h1' variant='h4' color='primary' sx={{ textAlign: 'center' }}>
+					Templates
+				</Typography>
+				{currentUser && userStore && (
+					<RouterLink to={ROUTES.createTemplate}>
+						<Button component='span' variant='contained' color='primary'>
+							Create template
+						</Button>
+					</RouterLink>
+				)}
+			</Box>
 
 			<TemplateList />
 		</Box>

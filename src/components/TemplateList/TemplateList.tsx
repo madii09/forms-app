@@ -13,7 +13,7 @@ import {
 	Button,
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import { useTemplate } from '../../hooks';
+import { useAuth, useTemplate } from '../../hooks';
 import { MAX_DESCRIPTION_LENGTH, ROUTES } from '../../utils';
 import Link from '@mui/material/Link';
 
@@ -22,6 +22,7 @@ export const TemplateList: React.FC = () => {
 		useTemplate();
 
 	const navigate = useNavigate();
+	const { currentUser } = useAuth();
 
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filteredTemplates, setFilteredTemplates] = useState(templates);
@@ -94,11 +95,17 @@ export const TemplateList: React.FC = () => {
 								sx={{ height: '100%', width: '350px', display: 'flex', flexDirection: 'column' }}
 							>
 								<CardContent sx={{ flex: 1 }}>
-									<RouterLink to={ROUTES.templateInfo.link + template.id}>
-										<Link component='h5' variant='h5' color='primary' gutterBottom>
+									{currentUser ? (
+										<RouterLink to={ROUTES.templateInfo.link + template.id}>
+											<Link component='h5' variant='h5' color='primary' gutterBottom>
+												{template.title}
+											</Link>
+										</RouterLink>
+									) : (
+										<Typography component='h5' variant='h5' color='primary' gutterBottom>
 											{template.title}
-										</Link>
-									</RouterLink>
+										</Typography>
+									)}
 									<Typography variant='body2' color='textSecondary' sx={{ marginBottom: 2 }}>
 										{truncateDescription(template.description)}
 									</Typography>
@@ -113,42 +120,46 @@ export const TemplateList: React.FC = () => {
 									</Typography>
 								</CardContent>
 
-								<Divider />
+								{currentUser && (
+									<>
+										<Divider />
 
-								<Box
-									sx={{
-										display: 'flex',
-										justifyContent: 'space-between',
-										alignItems: 'center',
-										padding: 2,
-										marginTop: 'auto',
-									}}
-								>
-									<Button
-										variant='outlined'
-										color={template.isPublic ? 'warning' : 'success'}
-										onClick={() => handleTogglePublic(template.id, template.isPublic)}
-									>
-										{template.isPublic ? 'Make Private' : 'Make Public'}
-									</Button>
-
-									<div>
-										<IconButton
-											color='primary'
-											onClick={() => navigate(ROUTES.editTemplate.link + template.id)}
+										<Box
+											sx={{
+												display: 'flex',
+												justifyContent: 'space-between',
+												alignItems: 'center',
+												padding: 2,
+												marginTop: 'auto',
+											}}
 										>
-											<Edit />
-										</IconButton>
+											<Button
+												variant='outlined'
+												color={template.isPublic ? 'warning' : 'success'}
+												onClick={() => handleTogglePublic(template.id, template.isPublic)}
+											>
+												{template.isPublic ? 'Make Private' : 'Make Public'}
+											</Button>
 
-										<IconButton
-											color='error'
-											onClick={() => handleDelete(template.id)}
-											aria-label='Delete Template'
-										>
-											<Delete />
-										</IconButton>
-									</div>
-								</Box>
+											<div>
+												<IconButton
+													color='primary'
+													onClick={() => navigate(ROUTES.editTemplate.link + template.id)}
+												>
+													<Edit />
+												</IconButton>
+
+												<IconButton
+													color='error'
+													onClick={() => handleDelete(template.id)}
+													aria-label='Delete Template'
+												>
+													<Delete />
+												</IconButton>
+											</div>
+										</Box>
+									</>
+								)}
 							</Card>
 						</Grid2>
 					))}

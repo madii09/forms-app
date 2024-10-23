@@ -8,6 +8,7 @@ import {
 	EditTemplate,
 	Requests,
 	RequestDetails,
+	TemplateInfo,
 } from '../pages';
 import { ROUTES } from '../utils';
 import { AuthProvider } from '../Providers/AuthProvider';
@@ -29,6 +30,7 @@ function App() {
 				<Route path={ROUTES.editTemplate.route} element={<EditTemplate />} />
 				<Route path={ROUTES.requests.route} element={<Requests />} />
 				<Route path={ROUTES.requests.request.route} element={<RequestDetails />} />
+				<Route path={ROUTES.templateInfo.route} element={<TemplateInfo />} />
 			</Routes>
 		</AuthProvider>
 	);

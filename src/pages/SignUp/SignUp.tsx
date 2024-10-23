@@ -1,10 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
@@ -17,6 +14,7 @@ import { ROUTES } from '../../utils';
 import { useAuth, useLogin } from '../../hooks';
 import { useEffect } from 'react';
 import { Snackbar } from '@mui/material';
+import FormLabel from '@mui/material/FormLabel';
 
 const Card = styled(MuiCard)(({ theme }) => ({
 	display: 'flex',
@@ -60,7 +58,7 @@ export const SignUp = () => {
 
 	const navigate = useNavigate();
 	const { login, loading, error } = useLogin({ isRegister: true });
-	const { currentUser } = useAuth();
+	const { currentUser, userStore } = useAuth();
 
 	const validateInputs = () => {
 		const email = document.getElementById('email') as HTMLInputElement;
@@ -120,10 +118,10 @@ export const SignUp = () => {
 	}, [error]);
 
 	useEffect(() => {
-		if (currentUser) {
+		if (currentUser && userStore) {
 			navigate(ROUTES.home);
 		}
-	}, [currentUser, navigate]);
+	}, [currentUser, navigate, userStore]);
 
 	return (
 		<Box sx={{ height: '100dvh', display: 'flex', flexDirection: 'column' }}>
@@ -194,10 +192,7 @@ export const SignUp = () => {
 								color={passwordError ? 'error' : 'primary'}
 							/>
 						</FormControl>
-						<FormControlLabel
-							control={<Checkbox value='allowExtraEmails' color='primary' />}
-							label='I want to receive updates via email.'
-						/>
+
 						<Button
 							type='submit'
 							fullWidth

@@ -2,10 +2,14 @@ import { TemplateProps } from '../../useTemplate/types';
 
 export interface RequestProps {
 	id: string;
+	ownerId: string;
 	templateId: string;
 	userId: string;
 	status: 'pending' | 'submitted';
-	assignedAt: string;
+	responses: Responses;
+	assignedAt?: { seconds: number; nanoseconds: number };
+	submittedAt?: { seconds: number; nanoseconds: number };
+	requestedAt?: { seconds: number; nanoseconds: number };
 	templateTitle: string;
 }
 
@@ -18,6 +22,10 @@ export interface UseRequestsResult {
 	loading: boolean;
 	error: string | null;
 	fetchTemplateByRequestId: (requestId: string) => Promise<TemplateProps | null>;
+	fetchSubmittedRequestsByTemplateId: (
+		templateID: string,
+		ownerID: string,
+	) => Promise<{ template: TemplateProps | null; requests: RequestProps[] }>;
 	submitRequest: (requestId: string, responses: Responses) => Promise<void>;
 	createTemplateRequests: (
 		templateId: string,

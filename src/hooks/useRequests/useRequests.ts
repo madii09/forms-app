@@ -31,7 +31,7 @@ export const useRequests = (): UseRequestsResult => {
 		);
 
 		const snapshot = await getDocs(q);
-		return snapshot.size; // Return the count of pending requests
+		return snapshot.size;
 	}, [currentUser]);
 
 	const fetchRequestsForUser = useCallback(async () => {
@@ -77,6 +77,35 @@ export const useRequests = (): UseRequestsResult => {
 				setError('Failed to load template.');
 			}
 			return null;
+		},
+		[],
+	);
+
+	const fetchSubmittedRequestsByTemplateId = useCallback(
+		async (templateID: string, ownerID: string) => {
+			try {
+				const q = query(
+					collection(db, 'templateRequests'),
+					where('templateId', '==', templateID),
+					where('ownerId', '==', ownerID), // Only requests owned by the current user
+					where('status', '==', 'submitted'),
+				);
+				const snapshot = await getDocs(q);
+				const requests = snapshot.docs.map(doc => ({
+					id: doc.id,
+					...doc.data(),
+				})) as RequestProps[];
+
+				// Fetch the template information
+				const templateDoc = await getDoc(doc(db, 'templates', templateID));
+				const template = templateDoc.exists() ? (templateDoc.data() as TemplateProps) : null;
+
+				return { template, requests };
+			} catch (err) {
+				console.error('Error fetching submitted requests:', err);
+				setError('Failed to load submitted requests.');
+				return { template: null, requests: [] };
+			}
 		},
 		[],
 	);
@@ -133,6 +162,7 @@ export const useRequests = (): UseRequestsResult => {
 		loading,
 		error,
 		fetchTemplateByRequestId,
+		fetchSubmittedRequestsByTemplateId,
 		submitRequest,
 		createTemplateRequests,
 		countPendingRequests,

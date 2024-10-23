@@ -6,3 +6,4 @@ export * from './CreateTemplate/CreateTemplate';
 export * from './EditTemplate/EditTemplate';
 export * from './Requests/Requests';
 export * from './RequestDetails/RequestDetails';
+export * from './TemplateInfo/TemplateInfo';

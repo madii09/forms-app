@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export const CreateTemplate = () => {
 	const navigate = useNavigate();
 	const { currentUser } = useAuth();
-	const { loading, createTemplate } = useTemplate();
+	const { loading, createTemplate, error } = useTemplate();
 
 	const handleCreateTemplate = async ({
 		title,
@@ -15,6 +15,8 @@ export const CreateTemplate = () => {
 		topic,
 		tags,
 		isPublic,
+		questions,
+		allowedUsers,
 	}: TemplateFormsCreateProps) => {
 		await createTemplate({
 			title,
@@ -23,12 +25,15 @@ export const CreateTemplate = () => {
 			tags,
 			isPublic,
 			authorId: currentUser?.uid || '',
+			questions,
+			allowedUsers: allowedUsers ? allowedUsers : [],
 		}).then(() => navigate(ROUTES.home));
 	};
 
 	return (
 		<Container maxWidth='sm'>
-			<TemplateForm onCreate={handleCreateTemplate} loading={loading} />
+			{error && <p>{error}</p>}
+			<TemplateForm onSubmit={handleCreateTemplate} loading={loading} />
 		</Container>
 	);
 };

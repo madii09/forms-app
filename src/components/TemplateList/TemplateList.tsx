@@ -1,4 +1,5 @@
 import React, { useEffect, useState, ChangeEvent } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
 	Box,
 	Card,
@@ -11,14 +12,16 @@ import {
 	Grid2,
 	Button,
 } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { Delete, Edit } from '@mui/icons-material';
 import { useTemplate } from '../../hooks';
-
-const MAX_DESCRIPTION_LENGTH = 100; // Maximum characters before truncating
+import { MAX_DESCRIPTION_LENGTH, ROUTES } from '../../utils';
+import Link from '@mui/material/Link';
 
 export const TemplateList: React.FC = () => {
 	const { templates, loading, error, fetchTemplates, deleteTemplate, updateTemplate } =
 		useTemplate();
+
+	const navigate = useNavigate();
 
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const [filteredTemplates, setFilteredTemplates] = useState(templates);
@@ -91,9 +94,11 @@ export const TemplateList: React.FC = () => {
 								sx={{ height: '100%', width: '350px', display: 'flex', flexDirection: 'column' }}
 							>
 								<CardContent sx={{ flex: 1 }}>
-									<Typography variant='h5' color='primary' gutterBottom>
-										{template.title}
-									</Typography>
+									<RouterLink to={ROUTES.templateInfo.link + template.id}>
+										<Link component='h5' variant='h5' color='primary' gutterBottom>
+											{template.title}
+										</Link>
+									</RouterLink>
 									<Typography variant='body2' color='textSecondary' sx={{ marginBottom: 2 }}>
 										{truncateDescription(template.description)}
 									</Typography>
@@ -116,7 +121,7 @@ export const TemplateList: React.FC = () => {
 										justifyContent: 'space-between',
 										alignItems: 'center',
 										padding: 2,
-										marginTop: 'auto', // Push buttons to bottom
+										marginTop: 'auto',
 									}}
 								>
 									<Button
@@ -127,13 +132,22 @@ export const TemplateList: React.FC = () => {
 										{template.isPublic ? 'Make Private' : 'Make Public'}
 									</Button>
 
-									<IconButton
-										color='error'
-										onClick={() => handleDelete(template.id)}
-										aria-label='Delete Template'
-									>
-										<Delete />
-									</IconButton>
+									<div>
+										<IconButton
+											color='primary'
+											onClick={() => navigate(ROUTES.editTemplate.link + template.id)}
+										>
+											<Edit />
+										</IconButton>
+
+										<IconButton
+											color='error'
+											onClick={() => handleDelete(template.id)}
+											aria-label='Delete Template'
+										>
+											<Delete />
+										</IconButton>
+									</div>
 								</Box>
 							</Card>
 						</Grid2>

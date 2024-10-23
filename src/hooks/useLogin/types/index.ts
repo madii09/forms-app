@@ -1,6 +1,7 @@
 import { UserRole } from '../../../Providers/AuthProvider';
 
 export interface UserDataProps {
+	username: string;
 	email: string;
 	role: UserRole;
 	blocked: boolean;

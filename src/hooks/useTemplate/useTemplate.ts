@@ -3,6 +3,7 @@ import {
 	collection,
 	addDoc,
 	getDocs,
+	getDoc,
 	updateDoc,
 	deleteDoc,
 	doc,
@@ -11,8 +12,8 @@ import {
 	QuerySnapshot,
 } from 'firebase/firestore';
 import { db } from '../../services/firebase';
-import { TemplateProps, UseTemplateResult } from './types';
 import { useAuth } from '../useAuth/useAuth.ts';
+import { AnswerProps, TemplateProps, UseTemplateResult } from './types';
 
 export const useTemplate = (): UseTemplateResult => {
 	const [templates, setTemplates] = useState<TemplateProps[]>([]);
@@ -40,6 +41,36 @@ export const useTemplate = (): UseTemplateResult => {
 			setLoading(false);
 		}
 	}, [currentUser]);
+
+	const getTemplateById = useCallback(
+		async (id: string) => {
+			setLoading(true);
+			setError(null);
+			try {
+				const docSnapshot = await getDoc(doc(db, 'templates', id));
+				if (docSnapshot.exists()) {
+					const fetchedTemplate = { id: docSnapshot.id, ...docSnapshot.data() } as TemplateProps;
+
+					// Handle access restriction for unauthenticated users
+					if (!currentUser && !fetchedTemplate.isPublic) {
+						setError('Template is not accessible.');
+						return;
+					}
+
+					// Replace the templates state with the fetched template
+					setTemplates([fetchedTemplate]);
+				} else {
+					setError('Template not found.');
+				}
+			} catch (err) {
+				setError('Failed to fetch template');
+				console.error('Error fetching template:', err);
+			} finally {
+				setLoading(false);
+			}
+		},
+		[currentUser],
+	);
 
 	const createTemplate = async (template: Omit<TemplateProps, 'id' | 'createdAt'>) => {
 		setLoading(true);
@@ -89,6 +120,25 @@ export const useTemplate = (): UseTemplateResult => {
 		}
 	};
 
+	const submitResponse = async (templateId: string, answers: AnswerProps[]) => {
+		setLoading(true);
+		setError(null);
+		try {
+			const response = {
+				templateId,
+				userId: currentUser?.uid,
+				answers,
+				submittedAt: Timestamp.fromDate(new Date()),
+			};
+			await addDoc(collection(db, 'responses'), response);
+		} catch (err) {
+			setError('Failed to submit response');
+			console.error('Error submitting response:', err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return {
 		templates,
 		loading,
@@ -97,5 +147,7 @@ export const useTemplate = (): UseTemplateResult => {
 		updateTemplate,
 		deleteTemplate,
 		fetchTemplates,
+		getTemplateById,
+		submitResponse,
 	};
 };

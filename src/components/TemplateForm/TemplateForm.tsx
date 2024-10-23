@@ -11,13 +11,18 @@ import {
 	FormControlLabel,
 } from '@mui/material';
 import { TemplateFormProps } from './types';
+import { QuestionProps } from '../../hooks';
+import { AddFields } from '../AddFields/AddFields';
+import { UserAutocomplete } from '../UserAutocomplete/UserAutocomplete.tsx';
 
-export const TemplateForm = ({ onCreate, loading }: TemplateFormProps) => {
-	const [title, setTitle] = useState('');
-	const [description, setDescription] = useState('');
-	const [topic, setTopic] = useState('');
-	const [tags, setTags] = useState('');
-	const [isPublic, setIsPublic] = useState(false);
+export const TemplateForm = ({ onSubmit, loading, initialValues }: TemplateFormProps) => {
+	const [title, setTitle] = useState(initialValues?.title || '');
+	const [description, setDescription] = useState(initialValues?.description || '');
+	const [topic, setTopic] = useState(initialValues?.topic || '');
+	const [tags, setTags] = useState(initialValues?.tags.join(', ') || '');
+	const [isPublic, setIsPublic] = useState(initialValues?.isPublic || false);
+	const [questions, setQuestions] = useState<QuestionProps[]>(initialValues?.questions || []);
+	const [selectedUsers, setSelectedUsers] = useState<string[]>(initialValues?.allowedUsers || []);
 
 	// State for error handling
 	const [titleError, setTitleError] = useState(false);
@@ -51,28 +56,32 @@ export const TemplateForm = ({ onCreate, loading }: TemplateFormProps) => {
 		return valid;
 	};
 
+	const handleChange =
+		(setter: React.Dispatch<React.SetStateAction<string>>) =>
+		(event: ChangeEvent<HTMLInputElement>) =>
+			setter(event.target.value);
+
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();
 		if (validateInputs()) {
-			onCreate({
+			onSubmit({
 				title,
 				description,
 				topic,
 				tags: tags.split(',').map(tag => tag.trim()),
 				isPublic,
+				questions,
+				allowedUsers: selectedUsers,
 			});
 			setTitle('');
 			setDescription('');
 			setTopic('');
 			setTags('');
 			setIsPublic(false);
+			setQuestions([]);
+			setSelectedUsers([]);
 		}
 	};
-
-	const handleChange =
-		(setter: React.Dispatch<React.SetStateAction<string>>) =>
-		(event: ChangeEvent<HTMLInputElement>) =>
-			setter(event.target.value);
 
 	return (
 		<Box
@@ -85,11 +94,17 @@ export const TemplateForm = ({ onCreate, loading }: TemplateFormProps) => {
 				width: '100%',
 				gap: 2,
 				alignItems: 'center',
+				margin: '1.5rem 0',
 			}}
 		>
 			<Typography component='h1' variant='h4' color='primary' sx={{ textAlign: 'center' }}>
-				Create a New Template
+				{initialValues ? 'Update Template' : 'Create a New Template'}
 			</Typography>
+
+			<UserAutocomplete
+				initiallySelectedUsers={selectedUsers}
+				onUsersChange={users => setSelectedUsers(users.map(u => u.uid))}
+			/>
 
 			<FormControl fullWidth error={titleError}>
 				<FormLabel htmlFor='title'>Title</FormLabel>
@@ -143,6 +158,8 @@ export const TemplateForm = ({ onCreate, loading }: TemplateFormProps) => {
 				/>
 			</FormControl>
 
+			<AddFields initialQuestions={questions} onChange={questions => setQuestions(questions)} />
+
 			<FormControlLabel
 				control={
 					<Checkbox
@@ -167,7 +184,7 @@ export const TemplateForm = ({ onCreate, loading }: TemplateFormProps) => {
 				disabled={loading}
 				sx={{ width: '100%' }}
 			>
-				{loading ? 'Creating...' : 'Create Template'}
+				{loading ? 'Submitting...' : initialValues ? 'Update Template' : 'Create Template'}
 			</Button>
 		</Box>
 	);

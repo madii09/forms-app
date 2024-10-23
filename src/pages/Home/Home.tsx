@@ -28,22 +28,3 @@ export const Home = () => {
 		</Box>
 	);
 };
-
-/*
-*
-* <TextField
-				label='Search Templates'
-				variant='outlined'
-				sx={{ width: '350px', margin: '1.5rem 0' }}
-				value={searchTerm}
-				onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-				placeholder='Search by title, description'
-			/>
-			*
-			* <Typography variant='h5' color='primary' gutterBottom>
-										{template.title}
-									</Typography>
-									*
-									*
-									* <Card sx={{ height: '100%', width: '300px' }}>
-* */

@@ -7,6 +7,7 @@ import { UserListTableProps } from './types';
 export const UserListTable = ({ users, onRowSelection }: UserListTableProps) => {
 	const columns: GridColDef[] = [
 		{ field: 'id', headerName: 'UUID', width: 250 },
+		{ field: 'username', headerName: 'Username', width: 250 },
 		{ field: 'email', headerName: 'Email', width: 250 },
 		{ field: 'role', headerName: 'Role', width: 100 },
 		{ field: 'blocked', headerName: 'Blocked' },
@@ -17,6 +18,7 @@ export const UserListTable = ({ users, onRowSelection }: UserListTableProps) => 
 			users.map(user => {
 				return {
 					id: user.uid,
+					username: user.username,
 					email: user.email,
 					role: user.role,
 					blocked: user.blocked ? 'Yes' : 'No',
@@ -32,7 +34,7 @@ export const UserListTable = ({ users, onRowSelection }: UserListTableProps) => 
 			<Typography variant='h6' color='primary'>
 				Users List
 			</Typography>
-			<Paper sx={{ height: 400, width: '100%' }}>
+			<Paper sx={{ height: 600, width: '100%' }}>
 				<DataGrid
 					rows={rows}
 					columns={columns}

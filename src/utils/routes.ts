@@ -12,4 +12,11 @@ export const ROUTES = {
 		route: '/template-info/:id',
 		link: '/template-info/',
 	},
+	requests: {
+		route: '/requests',
+		request: {
+			route: '/requests/request/:id',
+			link: '/requests/request/',
+		},
+	},
 } as const;

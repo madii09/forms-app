@@ -80,8 +80,7 @@ export const useTemplate = (): UseTemplateResult => {
 				...template,
 				createdAt: Timestamp.fromDate(new Date()),
 			};
-			await addDoc(collection(db, 'templates'), newTemplate);
-			await fetchTemplates(); // Refresh the list after creating
+			return (await addDoc(collection(db, 'templates'), newTemplate)) as { id: string };
 		} catch (err) {
 			setError('Failed to create template');
 			console.error('Error creating template:', err);

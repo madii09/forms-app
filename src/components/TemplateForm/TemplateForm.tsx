@@ -11,7 +11,7 @@ import {
 	FormControlLabel,
 } from '@mui/material';
 import { TemplateFormProps } from './types';
-import { QuestionProps } from '../../hooks';
+import { QuestionProps, useAuth } from '../../hooks';
 import { AddFields } from '../AddFields/AddFields';
 import { UserAutocomplete } from '../UserAutocomplete/UserAutocomplete';
 
@@ -23,6 +23,8 @@ export const TemplateForm = ({ onSubmit, loading, initialValues }: TemplateFormP
 	const [isPublic, setIsPublic] = useState(initialValues?.isPublic || false);
 	const [questions, setQuestions] = useState<QuestionProps[]>(initialValues?.questions || []);
 	const [selectedUsers, setSelectedUsers] = useState<string[]>(initialValues?.allowedUsers || []);
+
+	const { currentUser } = useAuth();
 
 	const [titleError, setTitleError] = useState(false);
 	const [descriptionError, setDescriptionError] = useState(false);
@@ -71,7 +73,9 @@ export const TemplateForm = ({ onSubmit, loading, initialValues }: TemplateFormP
 				isPublic,
 				questions,
 				allowedUsers: selectedUsers,
+				authorId: currentUser?.uid || '',
 			});
+
 			setTitle('');
 			setDescription('');
 			setTopic('');

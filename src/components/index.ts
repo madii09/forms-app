@@ -5,6 +5,7 @@ export * from './TemplateForm/TemplateForm';
 export * from './TemplateList/TemplateList';
 export * from './UserAutocomplete/UserAutocomplete';
 export * from './AddFields/AddFields';
+export * from './RequestsList/RequestsList';
 
 export * from './TemplateForm/types';
 export * from './UserListTable/types';

@@ -29,7 +29,9 @@ export interface UseTemplateResult {
 	templates: TemplateProps[];
 	loading: boolean;
 	error: string | null;
-	createTemplate: (template: Omit<TemplateProps, 'id' | 'createdAt'>) => Promise<void>;
+	createTemplate: (
+		template: Omit<TemplateProps, 'id' | 'createdAt'>,
+	) => Promise<{ id: string } | undefined>;
 	updateTemplate: (id: string, data: Partial<TemplateProps>) => Promise<void>;
 	deleteTemplate: (id: string) => Promise<void>;
 	fetchTemplates: () => Promise<void>;

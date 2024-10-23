@@ -52,7 +52,11 @@ export const UserAutocomplete = ({
 				))
 			}
 			renderInput={params => (
-				<TextField {...params} label='Select Users' placeholder='Search users...' />
+				<TextField
+					{...params}
+					label='Select Users to Request for filling out this form'
+					placeholder='Search users...'
+				/>
 			)}
 		/>
 	);

@@ -26,7 +26,7 @@ export const useLogin = ({ isRegister }: UseLoginProps): UseLoginResult => {
 				const user = userCredential.user;
 
 				// Update Firebase profile with the username
-				await updateProfile(user, { displayName: username });
+				await updateProfile(user, { displayName: normalizeUsername(username) });
 
 				// Set initial role and status in Firestore
 				const userDocRef = doc(db, 'users', user.uid);

@@ -29,7 +29,7 @@ export const AdminDashboard: React.FC = () => {
 
 	const onControlUsers = async (controlType: keyof UseAdminResult) => {
 		await userControls[controlType](selectedUsersIds.map(u => String(u)));
-		fetchUsers().catch(error => console.log('error on fetching users', error));
+		fetchUsers().catch(error => console.error('error on fetching users', error));
 	};
 
 	useEffect(() => {

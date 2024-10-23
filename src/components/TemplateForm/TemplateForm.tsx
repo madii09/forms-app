@@ -13,7 +13,7 @@ import {
 import { TemplateFormProps } from './types';
 import { QuestionProps } from '../../hooks';
 import { AddFields } from '../AddFields/AddFields';
-import { UserAutocomplete } from '../UserAutocomplete/UserAutocomplete.tsx';
+import { UserAutocomplete } from '../UserAutocomplete/UserAutocomplete';
 
 export const TemplateForm = ({ onSubmit, loading, initialValues }: TemplateFormProps) => {
 	const [title, setTitle] = useState(initialValues?.title || '');
@@ -24,7 +24,6 @@ export const TemplateForm = ({ onSubmit, loading, initialValues }: TemplateFormP
 	const [questions, setQuestions] = useState<QuestionProps[]>(initialValues?.questions || []);
 	const [selectedUsers, setSelectedUsers] = useState<string[]>(initialValues?.allowedUsers || []);
 
-	// State for error handling
 	const [titleError, setTitleError] = useState(false);
 	const [descriptionError, setDescriptionError] = useState(false);
 	const [topicError, setTopicError] = useState(false);

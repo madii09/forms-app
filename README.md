@@ -28,7 +28,7 @@ Check out the live version of the app [here](https://forms-app-5ddb9.web.app/).
 
 1. Clone this repository:
    ```bash
-   git clone https://github.com/your-username/forms-app.git
+   git clone https://github.com/madii09/forms-app.git
    ```
 2. Navigate to the project folder:
    ```bash

@@ -1,20 +1,19 @@
 import { Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '../Providers/AuthProvider';
+import { Navbar } from '../components';
 import {
-	Home,
-	SignUp,
-	SignIn,
 	AdminDashboard,
 	CreateTemplate,
 	EditTemplate,
-	Requests,
+	Home,
 	RequestDetails,
+	Requests,
+	SignIn,
+	SignUp,
 	TemplateInfo,
 } from '../pages';
 import { ROUTES } from '../utils';
-import { AuthProvider } from '../Providers/AuthProvider';
-import { Navbar } from '../components';
-
-import './globalStyles/globalStyles.module.scss';
+import './globalStyles/globalStyles.css';
 
 function App() {
 	return (

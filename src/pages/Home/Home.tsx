@@ -24,11 +24,18 @@ export const Home = () => {
 	return (
 		<Box sx={{ padding: '0 1rem' }}>
 			<Box sx={{ display: 'flex' }}>
-				<RouterLink to={ROUTES.jiraTickets}>
-					<Button component='span' variant='contained' color='primary' sx={{ margin: '0 0.5rem' }}>
-						Check Jira tickets
-					</Button>
-				</RouterLink>
+				{currentUser && userStore && (
+					<RouterLink to={ROUTES.jiraTickets}>
+						<Button
+							component='span'
+							variant='contained'
+							color='primary'
+							sx={{ margin: '0 0.5rem' }}
+						>
+							Check Jira tickets
+						</Button>
+					</RouterLink>
+				)}
 
 				{requestCount > 0 && (
 					<RouterLink to={ROUTES.requests.route} style={{ textDecoration: 'none' }}>

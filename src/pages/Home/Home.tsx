@@ -1,10 +1,10 @@
+import { Button } from '@mui/material';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import { Button } from '@mui/material';
-import Typography from '@mui/material/Typography';
-import { useAuth, useRequests } from '../../hooks';
 import { TemplateList } from '../../components';
+import { useAuth, useRequests } from '../../hooks';
 import { ROUTES } from '../../utils';
 
 export const Home = () => {
@@ -23,10 +23,20 @@ export const Home = () => {
 
 	return (
 		<Box sx={{ padding: '0 1rem' }}>
-			{requestCount > 0 && (
-				<Box sx={{ display: 'flex', justifyContent: 'flex-end', margin: '1.5rem 0' }}>
+			<Box sx={{ display: 'flex' }}>
+				<RouterLink to={ROUTES.jiraTickets}>
+					<Button component='span' variant='contained' color='primary' sx={{ margin: '0 0.5rem' }}>
+						Check Jira tickets
+					</Button>
+				</RouterLink>
+
+				{requestCount > 0 && (
 					<RouterLink to={ROUTES.requests.route} style={{ textDecoration: 'none' }}>
-						<Button variant='contained' color='secondary' sx={{ position: 'relative' }}>
+						<Button
+							variant='contained'
+							color='secondary'
+							sx={{ position: 'relative', margin: '0 0.5rem' }}
+						>
 							Requests ({requestCount})
 							{requestCount > 0 && (
 								<Box
@@ -51,13 +61,14 @@ export const Home = () => {
 							)}
 						</Button>
 					</RouterLink>
-				</Box>
-			)}
+				)}
+			</Box>
 
-			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<Typography component='h1' variant='h4' color='primary' sx={{ textAlign: 'center' }}>
-					Templates
-				</Typography>
+			<Typography component='h1' variant='h3' color='primary' sx={{ textAlign: 'center' }}>
+				Templates
+			</Typography>
+
+			<Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
 				{currentUser && userStore && (
 					<RouterLink to={ROUTES.createTemplate}>
 						<Button component='span' variant='contained' color='primary'>

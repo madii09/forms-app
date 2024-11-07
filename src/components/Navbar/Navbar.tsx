@@ -1,18 +1,20 @@
-import * as React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { AppBar, Button, Divider, Skeleton } from '@mui/material';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 import { ROUTES } from '../../utils';
-import Typography from '@mui/material/Typography';
+import { CreateTicketDialog } from '../CreateJiraTicketDialog/CreateJiraTicketDialog';
 
 export const Navbar = () => {
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [isDialogOpen, setDialogOpen] = useState(false);
 
 	const { currentUser, userStore, isUserAdmin, isLoading, logout } = useAuth();
 
@@ -58,6 +60,7 @@ export const Navbar = () => {
 
 	return (
 		<Box sx={{ flexGrow: 1, marginBottom: '2rem' }}>
+			<CreateTicketDialog open={isDialogOpen} onClose={() => setDialogOpen(false)} />
 			<AppBar position='static'>
 				<Toolbar>
 					<RouterLink to={ROUTES.home}>
@@ -73,9 +76,19 @@ export const Navbar = () => {
 					<Box sx={{ flexGrow: 1 }} />
 					<Box sx={{ display: { md: 'flex' } }}>
 						{isLoading ? (
-							<Skeleton variant='rectangular' width={300} height={30} />
+							<Skeleton variant='rectangular' width={500} height={30} />
 						) : currentUser ? (
 							<>
+								<Button
+									component='span'
+									variant='contained'
+									color='warning'
+									sx={{ height: '48px', marginRight: '1.5rem' }}
+									onClick={() => setDialogOpen(true)}
+									aria-label='Help'
+								>
+									Create Ticket for Jira
+								</Button>
 								{isUserAdmin && (
 									<RouterLink to={ROUTES.adminDashboard}>
 										<Button

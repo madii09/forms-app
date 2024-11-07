@@ -6,6 +6,7 @@ import {
 	CreateTemplate,
 	EditTemplate,
 	Home,
+	JiraTicketsList,
 	RequestDetails,
 	Requests,
 	SignIn,
@@ -30,6 +31,7 @@ function App() {
 				<Route path={ROUTES.requests.route} element={<Requests />} />
 				<Route path={ROUTES.requests.request.route} element={<RequestDetails />} />
 				<Route path={ROUTES.templateInfo.route} element={<TemplateInfo />} />
+				<Route path={ROUTES.jiraTickets} element={<JiraTicketsList />} />
 			</Routes>
 		</AuthProvider>
 	);
